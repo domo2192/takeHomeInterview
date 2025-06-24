@@ -1,0 +1,9 @@
+{
+    "document_type": "sample",
+    "content": "This is JSON test from Remote Server 2",
+    "timestamp": "2025-06-23T12:00:00Z",
+    "metadata": {
+      "source": "remote-server-2",
+      "format": "json"
+    }
+  }

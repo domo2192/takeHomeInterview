@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  local-server:
+    build: ./local-server
+    ports:
+      - "5001:5000"  
+    environment:
+      - LEGACY_HOST=remote-server-1
+      - LEGACY_USER=legacy
+      - SSH_KEY_PATH=/app/ssh_keys/id_rsa
+    depends_on:
+      - remote-server-1
+      - remote-server-2
+    networks:
+      - system-bridge
+
+  remote-server-1:
+    build: ./remote-server-1
+    container_name: remote-server-1
+    ports:
+      - "2222:22"
+    environment:
+      - REMOTE_SERVER_2_HOST=remote-server-2
+      - REMOTE_SERVER_2_PORT=8080
+    volumes:
+      - ./logs:/var/log/legacy
+    networks:
+      - system-bridge
+
+  remote-server-2:
+    build: ./remote-server-2
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - FILES_DIRECTORY=/app/files
+      - WINDOWS_MODE=true
+    volumes:
+      - ./remote-server-2/sample_files:/app/files:ro
+    networks:
+      - system-bridge
+
+networks:
+  system-bridge:
+    driver: bridge
